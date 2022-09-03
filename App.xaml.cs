@@ -112,8 +112,8 @@ namespace BlackOut
             const uint VK_H = 0x48; // H key
             const uint VK_S = 0x53; // S key
             const uint VK_A = 0x41; // A key
-            const uint VK_Q = 0x51; // A key
-            const uint VK_F2 = 0x71; // A key
+            const uint VK_Q = 0x51; // Q key
+            const uint VK_F2 = 0x71; // F2 key
 
             if (!RegisterHotKey(helper.Handle, HOTKEY1_ID, MOD_ALT | MOD_CTRL, VK_H))
             {
