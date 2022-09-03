@@ -5,16 +5,13 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Interop;
+using Application = System.Windows.Application;
 using Cursor = System.Windows.Forms.Cursor;
 
 namespace BlackOut
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : System.Windows.Application
+    public partial class App : Application, IDisposable
     {
 
         [DllImport("User32.dll")]
@@ -34,15 +31,48 @@ namespace BlackOut
         private const int HOTKEY2_ID = 9100;
         private const int HOTKEY3_ID = 9200;
         private const int HOTKEY4_ID = 9300;
-
-        public static RoutedCommand MyCommand = new RoutedCommand();
+        private const int HOTKEY5_ID = 9400;
+        private const string RegesterKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         Screen[] screens = Screen.AllScreens;
         Dictionary<Screen, MainWindow> windows = new Dictionary<Screen, MainWindow>();
+        private ContextMenuStrip _contextMenu = new ContextMenuStrip();
+        private readonly NotifyIcon _notifyIcon;
 
+        public App()
+        {
+            _notifyIcon = new NotifyIcon();
+            _notifyIcon.Icon = Resource.Icon;
+            _notifyIcon.Visible = true;
+            _notifyIcon.BalloonTipTitle = "BlackOut";
+            _notifyIcon.DoubleClick += NotifyIconDoubleClick;
+            CreateIconMenuStructure("Exit");
+            _notifyIcon.ContextMenuStrip = _contextMenu;
+        }
+
+        private void NotifyIconDoubleClick(object? sender, EventArgs e)
+        {
+            OnHotKeyPressedShowAllWindow();
+        }
+        public void CreateIconMenuStructure(string caption)
+        {
+            _contextMenu.Items.Add(caption, null, OnClick);
+        }
+
+        private void OnClick(object sender, EventArgs e)
+        {
+            var menuItem = (ToolStripMenuItem)sender;
+            switch (menuItem.Text)
+            {
+                case "Exit":
+                    Application.Current.Shutdown(0);
+                    break;
+
+            }
+        }
         protected override void OnStartup(StartupEventArgs e)
         {
 
-            RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(RegesterKey, true);
             key.SetValue("BackOut", Process.GetCurrentProcess().MainModule.FileName);
             base.OnStartup(e);
             foreach (var screen in screens)
@@ -65,9 +95,6 @@ namespace BlackOut
 
         }
 
-
-
-
         protected override void OnExit(ExitEventArgs e)
         {
             _source.RemoveHook(HwndHook);
@@ -75,7 +102,6 @@ namespace BlackOut
             UnregisterHotKey();
             base.OnExit(e);
         }
-
 
         private void RegisterHotKey()
         {
@@ -87,6 +113,7 @@ namespace BlackOut
             const uint VK_S = 0x53; // S key
             const uint VK_A = 0x41; // A key
             const uint VK_Q = 0x51; // A key
+            const uint VK_F2 = 0x71; // A key
 
             if (!RegisterHotKey(helper.Handle, HOTKEY1_ID, MOD_ALT | MOD_CTRL, VK_H))
             {
@@ -104,6 +131,10 @@ namespace BlackOut
             {
                 // handle error
             }
+            if (!RegisterHotKey(helper.Handle, HOTKEY5_ID, MOD_ALT | MOD_CTRL, VK_F2))
+            {
+                // handle error
+            }
         }
 
         private void UnregisterHotKey()
@@ -113,6 +144,7 @@ namespace BlackOut
             UnregisterHotKey(helper.Handle, HOTKEY2_ID);
             UnregisterHotKey(helper.Handle, HOTKEY3_ID);
             UnregisterHotKey(helper.Handle, HOTKEY4_ID);
+            UnregisterHotKey(helper.Handle, HOTKEY5_ID);
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -139,10 +171,26 @@ namespace BlackOut
                             OnHotKeyPressedHideAllWindow();
                             handled = true;
                             break;
+                        case HOTKEY5_ID:
+                            OnHotKeyPressedShowAllExceptCurrentWindow();
+                            handled = true;
+                            break;
                     }
                     break;
             }
             return IntPtr.Zero;
+        }
+
+        private void OnHotKeyPressedShowAllExceptCurrentWindow()
+        {
+            Screen s = Screen.FromPoint(Cursor.Position);
+            foreach (var window in windows)
+            {
+                if (!window.Key.Equals(s))
+                    window.Value.Show();
+                else
+                    window.Value.Hide();
+            }
         }
 
         private void OnHotKeyPressedHideAllWindow()
@@ -177,6 +225,11 @@ namespace BlackOut
                 windows[s].Hide();
             }
 
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

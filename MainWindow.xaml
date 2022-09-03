@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlackOut"
-        mc:Ignorable="d" WindowState ="Normal" WindowStyle="None"   Title="MainWindow" Height="450" Width="800" Background="Black" ResizeMode="NoResize">
+        mc:Ignorable="d" WindowState ="Normal" WindowStyle="None"   Title="MainWindow" Height="450" Width="800" Background="Black" ResizeMode="NoResize" Topmost="True">
     <Grid>
 
     </Grid>
