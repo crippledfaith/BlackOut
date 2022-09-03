@@ -11,7 +11,7 @@ using Cursor = System.Windows.Forms.Cursor;
 
 namespace BlackOut
 {
-    public partial class App : Application, IDisposable
+    public partial class App : Application
     {
 
         [DllImport("User32.dll")]
@@ -227,9 +227,5 @@ namespace BlackOut
 
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
