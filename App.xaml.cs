@@ -156,11 +156,11 @@ namespace BlackOut
                     switch (wParam.ToInt32())
                     {
                         case HOTKEY1_ID:
-                            OnHotKeyPressedHideWindow();
+                            OnHotKeyPressedShowWindow();
                             handled = true;
                             break;
                         case HOTKEY2_ID:
-                            OnHotKeyPressedShowWindow();
+                            OnHotKeyPressedHideWindow();
                             handled = true;
                             break;
                         case HOTKEY3_ID:
