@@ -11,11 +11,12 @@
             <LineBreak></LineBreak>
             <Run>CTRL + ALT + S = Show the current active Screen.</Run>
             <LineBreak></LineBreak>
+            <Run>CTRL + ALT + H = Hide the current active Screen</Run>
+            <LineBreak></LineBreak>
             <Run>CTRL + ALT + A = BlackOut all Screens.</Run>
             <LineBreak></LineBreak>
             <Run>CTRL + ALT + Q = Show all Screens.</Run>
-            <LineBreak></LineBreak>
-            <Run>CTRL + ALT + H = Show the current active Screen</Run>
+
             <LineBreak></LineBreak>
             <Run>CTRL + ALT + F2 = Show only current active Sceen and BlackOut all others.</Run>
 
